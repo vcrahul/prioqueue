@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quadrant — Profile &amp; Settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12141a; --surface:#181b23; --surface-2:#20242f; --surface-3:#282d3a;
+    --border:#2e3341; --border-soft:#23273240; --text:#edeef3; --text-dim:#9095a8; --text-faint:#5c6175;
+    --brass:#c9a15a; --brass-soft:rgba(201,161,90,0.14);
+    --do:#dd5b45; --do-soft:rgba(221,91,69,0.14);
+    --decide:#4f8fe0; --decide-soft:rgba(79,143,224,0.14);
+    --delegate:#e0b84f; --delegate-soft:rgba(224,184,79,0.16);
+    --delete:#7c8194; --delete-soft:rgba(124,129,148,0.16);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#0a0b0e;font-family:'Inter',sans-serif;color:var(--text);}
+  .review-strip{display:flex;align-items:center;gap:8px;padding:14px 22px;background:#08090c;border-bottom:1px solid #1c1f28;flex-wrap:wrap;}
+  .review-strip span{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);}
+  .review-strip b{color:var(--brass);font-weight:500;}
+  .review-strip button{margin-left:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);
+    font-family:'Inter',sans-serif;font-size:11.5px;padding:6px 12px;border-radius:7px;cursor:pointer;}
+  .review-strip button:hover{color:var(--brass);border-color:var(--brass);}
+
+  .frame{max-width:1440px;margin:28px auto 60px;background:var(--bg);border:1px solid #1c1f28;border-radius:20px;overflow:hidden;
+    box-shadow:0 40px 100px -40px rgba(0,0,0,.8);display:flex;min-height:860px;position:relative;}
+
+  .rail{width:236px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:26px 16px;}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 8px 26px;margin-bottom:18px;border-bottom:1px solid var(--border);}
+  .brand-mark{width:34px;height:34px;border-radius:9px;background:conic-gradient(from 45deg,var(--do),var(--delegate),var(--decide),var(--delete),var(--do));display:flex;align-items:center;justify-content:center;position:relative;}
+  .brand-mark::after{content:"";width:12px;height:12px;background:var(--bg);border-radius:3px;}
+  .brand-name{font-family:'Fraunces',serif;font-size:19px;font-weight:600;}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;color:var(--text-dim);font-size:14.5px;font-weight:500;margin-bottom:4px;border-left:3px solid transparent;}
+  .nav-item svg{width:18px;height:18px;flex-shrink:0;}
+  .nav-item.active{background:var(--brass-soft);color:var(--brass);border-left-color:var(--brass);}
+
+  .main{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 34px;border-bottom:1px solid var(--border);}
+  .topbar-left{display:flex;align-items:center;gap:16px;}
+  .hamburger{width:38px;height:38px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);}
+  .hamburger:hover{color:var(--brass);border-color:var(--brass);}
+  .page-heading h1{font-family:'Fraunces',serif;font-weight:600;font-size:24px;margin:0;}
+  .profile-pill{display:flex;align-items:center;gap:9px;padding:8px 14px 8px 8px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;cursor:pointer;}
+  .profile-pill .swatch{width:24px;height:24px;border-radius:50%;}
+  .profile-pill .label{font-size:11px;color:var(--text-faint);display:block;line-height:1.2;}
+  .profile-pill .value{font-size:13.5px;font-weight:600;line-height:1.2;}
+  .profile-pill svg{width:14px;height:14px;color:var(--text-faint);}
+
+  .content{padding:34px;overflow:auto;flex:1;}
+  .profile-row{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:12px;}
+  .profile-row.selected{border-color:var(--brass);background:var(--brass-soft);}
+  .p-logo{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:17px;flex-shrink:0;}
+  .p-info{flex:1;}
+  .p-info h3{margin:0 0 3px;font-family:'Fraunces',serif;font-size:16px;font-weight:600;}
+  .p-info span{font-size:12px;color:var(--text-faint);}
+  .p-badge{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--brass);border:1px solid var(--brass);padding:4px 10px;border-radius:999px;}
+  .row-actions{display:flex;gap:8px;}
+  .icon-btn{width:34px;height:34px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);}
+  .icon-btn:hover{color:var(--brass);border-color:var(--brass);}
+  .icon-btn.danger:hover{color:var(--do);border-color:var(--do);}
+  .icon-btn svg{width:15px;height:15px;}
+  .select-btn{padding:9px 16px;border-radius:9px;font-size:12.5px;font-weight:600;background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);cursor:pointer;}
+  .profile-row.selected .select-btn{background:var(--brass);color:#1c1508;border-color:var(--brass);}
+
+  .add-row{display:flex;align-items:center;gap:12px;padding:16px 18px;border:1.5px dashed var(--border);border-radius:14px;color:var(--text-faint);cursor:pointer;justify-content:center;font-size:13.5px;font-weight:500;}
+  .add-row:hover{border-color:var(--brass);color:var(--brass);}
+  .add-row svg{width:16px;height:16px;}
+
+  /* Modal */
+  .overlay{position:absolute;inset:0;background:rgba(6,7,10,.68);display:flex;align-items:center;justify-content:center;z-index:20;}
+  .overlay.hidden{display:none;}
+  .modal{width:400px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px;box-shadow:0 30px 70px -20px rgba(0,0,0,.6);}
+  .modal h2{font-family:'Fraunces',serif;font-size:19px;margin:0 0 18px;font-weight:600;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--text-dim);margin-bottom:8px;}
+  .field input[type=text]{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;}
+  .swatches{display:flex;gap:10px;flex-wrap:wrap;}
+  .swatch-opt{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;}
+  .swatch-opt.sel{border-color:var(--text);}
+  .upload-box{border:1.5px dashed var(--border);border-radius:10px;padding:16px;text-align:center;color:var(--text-faint);font-size:12.5px;cursor:pointer;}
+  .upload-box:hover{border-color:var(--brass);color:var(--brass);}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;}
+  .btn{padding:11px 20px;border-radius:10px;font-size:13.5px;font-weight:600;cursor:pointer;border:1px solid var(--border);}
+  .btn-ghost{background:transparent;color:var(--text-dim);}
+  .btn-primary{background:var(--brass);color:#1c1508;border-color:var(--brass);}
+  .btn-danger{background:var(--do);color:#2a0e08;border-color:var(--do);}
+
+  /* Sidebar drawer */
+  .drawer-overlay{position:absolute;inset:0;background:rgba(6,7,10,.55);z-index:30;display:flex;}
+  .drawer-overlay.hidden{display:none;}
+  .drawer{width:300px;height:100%;background:var(--surface);border-right:1px solid var(--border);padding:26px 20px;display:flex;flex-direction:column;}
+  .drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;}
+  .drawer-head h3{font-family:'Fraunces',serif;font-size:18px;margin:0;}
+  .drawer-close{width:30px;height:30px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dim);}
+  .drawer-item{display:flex;align-items:center;gap:12px;padding:13px 12px;border-radius:10px;color:var(--text);font-size:14px;font-weight:500;cursor:pointer;margin-bottom:4px;}
+  .drawer-item:hover{background:var(--surface-2);}
+  .drawer-item svg{width:17px;height:17px;color:var(--text-dim);}
+  .drawer-item.name-item{background:var(--surface-2);cursor:default;}
+  .drawer-item.name-item svg{color:var(--brass);}
+  .drawer-item.name-item div span{display:block;font-size:11px;color:var(--text-faint);font-weight:400;}
+  .drawer-foot{margin-top:auto;font-size:11px;color:var(--text-faint);font-family:'IBM Plex Mono',monospace;padding:0 12px;}
+
+  /* Import warning */
+  .warn-modal{width:420px;background:var(--surface);border:1px solid var(--delegate);border-radius:16px;padding:26px;}
+  .warn-modal .icon{width:44px;height:44px;border-radius:50%;background:var(--delegate-soft);display:flex;align-items:center;justify-content:center;color:var(--delegate);margin-bottom:16px;}
+  .warn-modal .icon svg{width:20px;height:20px;}
+  .warn-modal h2{font-family:'Fraunces',serif;font-size:18px;margin:0 0 8px;}
+  .warn-modal p{color:var(--text-dim);font-size:13.5px;line-height:1.6;margin:0 0 6px;}
+  .warn-modal p b{color:var(--delegate);}
+
+  /* ---- Mobile bottom tab bar (hidden on desktop) ---- */
+  .mobile-tabbar{display:none;}
+
+  /* ---- Responsive: mobile browser width ---- */
+  @media (max-width: 720px){
+    .review-strip{font-size:10px;}
+    .review-strip button{font-size:10.5px;padding:5px 9px;}
+    .frame{
+      flex-direction:column;max-width:430px;border-radius:0;margin:0 auto;
+      box-shadow:none;border-left:none;border-right:none;min-height:100vh;
+    }
+    .rail{display:none;}
+    .main{width:100%;}
+    .topbar{padding:16px 18px;}
+    .page-heading h1{font-size:19px;}
+    .content{padding:16px 16px 90px;}
+    .profile-row{padding:13px 14px;gap:12px;}
+    .p-info h3{font-size:14.5px;}
+    .modal, .warn-modal{width:92%;}
+    .drawer{width:78%;}
+
+    .mobile-tabbar{
+      display:flex;justify-content:space-around;align-items:center;
+      background:var(--surface);border-top:1px solid var(--border);
+      padding:10px 4px 14px;flex-shrink:0;
+    }
+    .tab-item{
+      display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text-faint);
+      font-size:10.5px;font-weight:500;padding:4px 10px;border-radius:10px;
+    }
+    .tab-item svg{width:20px;height:20px;}
+    .tab-item.active{color:var(--brass);}
+  }
+</style>
+</head>
+<body>
+
+<div class="review-strip">
+  <span>Desktop mockup 3 of 3 — <b>Profile</b> · <b>Add profile popup</b> · <b>Hamburger menu</b> · <b>Import warning</b></span>
+  <button onclick="showModal('addprofile')">Preview: Add profile</button>
+  <button onclick="toggleDrawer(true)">Preview: Hamburger menu</button>
+  <button onclick="showModal('import')">Preview: Import warning</button>
+  <button onclick="showModal(null); toggleDrawer(false)">Close popups</button>
+</div>
+
+<div class="frame">
+  <div class="rail">
+    <div class="brand"><div class="brand-mark"></div><div class="brand-name">Quadrant</div></div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></svg>Today</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 4v16M4 12h16"/></svg>Eisenhower Matrix</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 7h14M5 12h14M5 17h9"/></svg>Tasks</div>
+    <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.6-3.8 4.6-5.6 7-5.6s5.4 1.8 7 5.6"/></svg>Profile</div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="hamburger" onclick="toggleDrawer(true)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg></div>
+        <div class="page-heading"><h1>Profiles</h1></div>
+      </div>
+      <div class="profile-pill"><div class="swatch" style="background:var(--do)"></div><div><span class="label">Selected profile</span><span class="value">Work</span></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="profile-row selected">
+        <div class="p-logo" style="background:var(--do-soft);color:var(--do)">W</div>
+        <div class="p-info"><h3>Work</h3><span>18 tasks</span></div>
+        <div class="select-btn">Selected</div>
+        <div class="row-actions">
+          <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+          <div class="icon-btn danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></div>
+        </div>
+      </div>
+
+      <div class="profile-row">
+        <div class="p-logo" style="background:var(--decide-soft);color:var(--decide)">P</div>
+        <div class="p-info"><h3>Personal</h3><span>9 tasks</span></div>
+        <div class="select-btn">Select</div>
+        <div class="row-actions">
+          <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+          <div class="icon-btn danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></div>
+        </div>
+      </div>
+
+      <div class="profile-row">
+        <div class="p-logo" style="background:var(--delegate-soft);color:var(--delegate)">F</div>
+        <div class="p-info"><h3>Family</h3><span>5 tasks</span></div>
+        <div class="select-btn">Select</div>
+        <div class="row-actions">
+          <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
+          <div class="icon-btn danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></div>
+        </div>
+      </div>
+
+      <div class="add-row" onclick="showModal('addprofile')" style="margin-top:18px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+        Add profile
+      </div>
+    </div>
+
+    <!-- Mobile-only bottom tab bar (shown when the browser is narrowed) -->
+    <div class="mobile-tabbar">
+      <div class="tab-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></svg><span>Today</span></div>
+      <div class="tab-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 4v16M4 12h16"/></svg><span>EM</span></div>
+      <div class="tab-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 7h14M5 12h14M5 17h9"/></svg><span>Tasks</span></div>
+      <div class="tab-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.6-3.8 4.6-5.6 7-5.6s5.4 1.8 7 5.6"/></svg><span>Profile</span></div>
+    </div>
+  </div>
+
+  <!-- Add profile modal -->
+  <div class="overlay hidden" id="overlay-addprofile">
+    <div class="modal">
+      <h2>Add profile</h2>
+      <div class="field"><label>Name</label><input type="text" placeholder="e.g. Side project"></div>
+      <div class="field"><label>Colour</label>
+        <div class="swatches">
+          <div class="swatch-opt sel" style="background:var(--do)"></div>
+          <div class="swatch-opt" style="background:var(--decide)"></div>
+          <div class="swatch-opt" style="background:var(--delegate)"></div>
+          <div class="swatch-opt" style="background:var(--delete)"></div>
+          <div class="swatch-opt" style="background:var(--brass)"></div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0"><label>Logo</label><div class="upload-box">Click to upload an image</div></div>
+      <div class="modal-actions">
+        <div class="btn btn-ghost" onclick="showModal(null)">Cancel</div>
+        <div class="btn btn-primary" onclick="showModal(null)">Save profile</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import warning modal -->
+  <div class="overlay hidden" id="overlay-import">
+    <div class="warn-modal">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div>
+      <h2>Import will merge with existing data</h2>
+      <p>You already have tasks and profiles saved. Importing may <b>overwrite or remove some existing tasks</b> where they conflict.</p>
+      <p>Proceed at your own risk.</p>
+      <div class="modal-actions">
+        <div class="btn btn-ghost" onclick="showModal(null)">Cancel</div>
+        <div class="btn btn-danger" onclick="showModal(null)">Import anyway</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hamburger drawer -->
+  <div class="drawer-overlay hidden" id="drawer-overlay">
+    <div class="drawer">
+      <div class="drawer-head"><h3>Menu</h3><div class="drawer-close" onclick="toggleDrawer(false)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></div>
+      </div>
+      <div class="drawer-item name-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.6-3.8 4.6-5.6 7-5.6s5.4 1.8 7 5.6"/></svg>
+        <div>Aditi Rao<span>Signed in locally</span></div>
+      </div>
+      <div class="drawer-item" onclick="showModal('import')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+        Import
+      </div>
+      <div class="drawer-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21V9"/><path d="M17 14l-5-5-5 5"/><path d="M4 3h16"/></svg>
+        Export <span style="margin-left:auto;color:var(--text-faint);font-size:11px;font-family:'IBM Plex Mono',monospace;">.json</span>
+      </div>
+      <div class="drawer-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5M12 8h.01"/></svg>
+        About
+      </div>
+      <div class="drawer-foot">Quadrant · v1.0</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showModal(which){
+    document.getElementById('overlay-addprofile').classList.add('hidden');
+    document.getElementById('overlay-import').classList.add('hidden');
+    if(which==='addprofile') document.getElementById('overlay-addprofile').classList.remove('hidden');
+    if(which==='import') document.getElementById('overlay-import').classList.remove('hidden');
+  }
+  function toggleDrawer(open){
+    document.getElementById('drawer-overlay').classList.toggle('hidden', !open);
+  }
+</script>
+</body>
+</html>

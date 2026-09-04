@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quadrant — Add / Edit Task</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12141a; --surface:#181b23; --surface-2:#20242f; --surface-3:#282d3a;
+    --border:#2e3341; --border-soft:#23273240; --text:#edeef3; --text-dim:#9095a8; --text-faint:#5c6175;
+    --brass:#c9a15a; --brass-soft:rgba(201,161,90,0.14);
+    --do:#dd5b45; --do-soft:rgba(221,91,69,0.14);
+    --decide:#4f8fe0; --decide-soft:rgba(79,143,224,0.14);
+    --delegate:#e0b84f; --delegate-soft:rgba(224,184,79,0.16);
+    --delete:#7c8194; --delete-soft:rgba(124,129,148,0.16);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#0a0b0e;font-family:'Inter',sans-serif;color:var(--text);}
+  .review-strip{display:flex;align-items:center;gap:8px;padding:14px 22px;background:#08090c;border-bottom:1px solid #1c1f28;}
+  .review-strip span{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);}
+  .review-strip b{color:var(--brass);font-weight:500;}
+  .review-strip button{margin-left:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);
+    font-family:'Inter',sans-serif;font-size:11.5px;padding:6px 12px;border-radius:7px;cursor:pointer;}
+  .review-strip button:hover{color:var(--brass);border-color:var(--brass);}
+
+  .frame{max-width:1440px;margin:28px auto 60px;background:var(--bg);border:1px solid #1c1f28;border-radius:20px;overflow:hidden;
+    box-shadow:0 40px 100px -40px rgba(0,0,0,.8);display:flex;min-height:860px;position:relative;}
+
+  .rail{width:236px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:26px 16px;}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 8px 26px;margin-bottom:18px;border-bottom:1px solid var(--border);}
+  .brand-mark{width:34px;height:34px;border-radius:9px;background:conic-gradient(from 45deg,var(--do),var(--delegate),var(--decide),var(--delete),var(--do));display:flex;align-items:center;justify-content:center;position:relative;}
+  .brand-mark::after{content:"";width:12px;height:12px;background:var(--bg);border-radius:3px;}
+  .brand-name{font-family:'Fraunces',serif;font-size:19px;font-weight:600;}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;color:var(--text-dim);font-size:14.5px;font-weight:500;margin-bottom:4px;border-left:3px solid transparent;}
+  .nav-item svg{width:18px;height:18px;flex-shrink:0;}
+  .nav-item.active{background:var(--brass-soft);color:var(--brass);border-left-color:var(--brass);}
+
+  .main{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 34px;border-bottom:1px solid var(--border);}
+  .topbar-left{display:flex;align-items:center;gap:16px;}
+  .back{width:38px;height:38px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-dim);cursor:pointer;}
+  .page-heading h1{font-family:'Fraunces',serif;font-weight:600;font-size:24px;margin:0;}
+  .page-heading p{margin:3px 0 0;color:var(--text-faint);font-size:13px;}
+
+  .content{padding:34px;overflow:auto;flex:1;display:flex;justify-content:center;}
+  .form-card{width:100%;max-width:640px;}
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .field{margin-bottom:20px;}
+  .field.span2{grid-column:1 / -1;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--text-dim);margin-bottom:8px;letter-spacing:.02em;}
+  .field input[type=text], .field input[type=date], .field input[type=time]{
+    width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;
+    color:var(--text);font-size:14px;font-family:'Inter',sans-serif;
+  }
+  .field input::placeholder{color:var(--text-faint);}
+  .cat-row{display:flex;gap:10px;align-items:center;}
+  .cat-row select{flex:1;}
+  select{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;appearance:none;font-family:'Inter',sans-serif;}
+  .icon-btn-sq{width:44px;height:44px;flex-shrink:0;border-radius:10px;background:var(--brass-soft);border:1px solid var(--brass);color:var(--brass);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .icon-btn-sq svg{width:18px;height:18px;}
+  .toggle-group{display:flex;gap:10px;}
+  .toggle-opt{flex:1;text-align:center;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);font-size:13.5px;font-weight:500;color:var(--text-dim);cursor:pointer;}
+  .toggle-opt.sel-urgent{border-color:var(--do);color:var(--do);background:var(--do-soft);}
+  .toggle-opt.sel-important{border-color:var(--decide);color:var(--decide);background:var(--decide-soft);}
+  .em-preview{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:10px;background:var(--do-soft);border:1px solid var(--do);margin-bottom:22px;}
+  .em-preview .dot{width:9px;height:9px;border-radius:50%;background:var(--do);}
+  .em-preview b{color:var(--do);}
+  .em-preview span{color:var(--text-dim);font-size:13px;}
+  .form-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:8px;}
+  .btn{padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);}
+  .btn-ghost{background:transparent;color:var(--text-dim);}
+  .btn-primary{background:var(--brass);color:#1c1508;border-color:var(--brass);}
+
+  /* Modal */
+  .overlay{position:absolute;inset:0;background:rgba(6,7,10,.68);display:flex;align-items:center;justify-content:center;z-index:20;}
+  .overlay.hidden{display:none;}
+  .modal{width:400px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px;box-shadow:0 30px 70px -20px rgba(0,0,0,.6);}
+  .modal h2{font-family:'Fraunces',serif;font-size:19px;margin:0 0 18px;font-weight:600;}
+  .swatches{display:flex;gap:10px;margin-bottom:4px;flex-wrap:wrap;}
+  .swatch-opt{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;}
+  .swatch-opt.sel{border-color:var(--text);}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;}
+  .upload-box{border:1.5px dashed var(--border);border-radius:10px;padding:16px;text-align:center;color:var(--text-faint);font-size:12.5px;cursor:pointer;}
+  .upload-box:hover{border-color:var(--brass);color:var(--brass);}
+
+  .alert-modal{width:380px;background:var(--surface);border:1px solid var(--do);border-radius:16px;padding:26px;text-align:left;}
+  .alert-modal .icon{width:44px;height:44px;border-radius:50%;background:var(--do-soft);display:flex;align-items:center;justify-content:center;color:var(--do);margin-bottom:16px;}
+  .alert-modal .icon svg{width:20px;height:20px;}
+  .alert-modal h2{font-family:'Fraunces',serif;font-size:18px;margin:0 0 8px;}
+  .alert-modal p{color:var(--text-dim);font-size:13.5px;line-height:1.55;margin:0;}
+  .btn-danger{background:var(--do);color:#2a0e08;border-color:var(--do);}
+
+  /* ---- Responsive: mobile browser width ---- */
+  /* This page is a pushed sub-screen (back arrow, no bottom nav) — matches the original sketch. */
+  @media (max-width: 720px){
+    .review-strip{font-size:10px;}
+    .review-strip button{font-size:10.5px;padding:5px 9px;}
+    .frame{
+      flex-direction:column;max-width:430px;border-radius:0;margin:0 auto;
+      box-shadow:none;border-left:none;border-right:none;min-height:100vh;
+    }
+    .rail{display:none;}
+    .main{width:100%;}
+    .topbar{padding:16px 18px;}
+    .page-heading h1{font-size:19px;}
+    .page-heading p{font-size:12px;}
+    .content{padding:16px 16px 30px;align-items:stretch;}
+    .field-grid{grid-template-columns:1fr;gap:0;}
+    .form-actions{flex-direction:column-reverse;}
+    .form-actions .btn{width:100%;text-align:center;}
+    .modal, .alert-modal{width:92%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="review-strip">
+  <span>Desktop mockup 2 of 3 — <b>Add / Edit Task</b></span>
+  <button onclick="show('cat')">Preview: Add category popup</button>
+  <button onclick="show('del')">Preview: Delete confirmation</button>
+  <button onclick="show(null)">Close popup</button>
+</div>
+
+<div class="frame">
+  <div class="rail">
+    <div class="brand"><div class="brand-mark"></div><div class="brand-name">Quadrant</div></div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></svg>Today</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M12 4v16M4 12h16"/></svg>Eisenhower Matrix</div>
+    <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 7h14M5 12h14M5 17h9"/></svg>Tasks</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.6-3.8 4.6-5.6 7-5.6s5.4 1.8 7 5.6"/></svg>Profile</div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></div>
+        <div class="page-heading"><h1>Edit task</h1><p>Changes save to the selected profile</p></div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="form-card">
+
+        <div class="em-preview"><span class="dot"></span><span>Falls under</span><b>&nbsp;Do&nbsp;</b><span>— urgent and important</span></div>
+
+        <div class="field span2">
+          <label>Task name</label>
+          <input type="text" value="Submit tax documents" placeholder="e.g. Submit tax documents">
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label>Category</label>
+            <div class="cat-row">
+              <select><option>Finance</option><option>Work</option><option>Personal</option></select>
+              <div class="icon-btn-sq" onclick="show('cat')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg></div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Profile</label>
+            <select><option>Work</option><option>Personal</option><option>Family</option></select>
+          </div>
+          <div class="field">
+            <label>Date</label>
+            <input type="date" value="2026-09-14">
+          </div>
+          <div class="field">
+            <label>Reminder time</label>
+            <input type="time" value="09:00">
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label>Urgency</label>
+            <div class="toggle-group">
+              <div class="toggle-opt sel-urgent">Urgent</div>
+              <div class="toggle-opt">Less urgent</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Importance</label>
+            <div class="toggle-group">
+              <div class="toggle-opt sel-important">Important</div>
+              <div class="toggle-opt">Less important</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <div class="btn btn-ghost" onclick="show('del')">Delete task</div>
+          <div class="btn btn-primary">Save task</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add category modal -->
+  <div class="overlay hidden" id="overlay-cat">
+    <div class="modal">
+      <h2>Add category</h2>
+      <div class="field"><label>Name</label><input type="text" placeholder="e.g. Health"></div>
+      <div class="field"><label>Colour</label>
+        <div class="swatches">
+          <div class="swatch-opt sel" style="background:var(--do)"></div>
+          <div class="swatch-opt" style="background:var(--decide)"></div>
+          <div class="swatch-opt" style="background:var(--delegate)"></div>
+          <div class="swatch-opt" style="background:var(--delete)"></div>
+          <div class="swatch-opt" style="background:var(--brass)"></div>
+          <div class="swatch-opt" style="background:#8f6bd6"></div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0"><label>Logo</label><div class="upload-box">Click to upload an icon (optional)</div></div>
+      <div class="modal-actions">
+        <div class="btn btn-ghost" onclick="show(null)">Cancel</div>
+        <div class="btn btn-primary" onclick="show(null)">Save category</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirm modal -->
+  <div class="overlay hidden" id="overlay-del">
+    <div class="alert-modal">
+      <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg></div>
+      <h2>Delete this task?</h2>
+      <p>"Submit tax documents" will be permanently removed. This can't be undone.</p>
+      <div class="modal-actions">
+        <div class="btn btn-ghost" onclick="show(null)">Cancel</div>
+        <div class="btn btn-danger" onclick="show(null)">Delete task</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function show(which){
+    document.getElementById('overlay-cat').classList.add('hidden');
+    document.getElementById('overlay-del').classList.add('hidden');
+    if(which==='cat') document.getElementById('overlay-cat').classList.remove('hidden');
+    if(which==='del') document.getElementById('overlay-del').classList.remove('hidden');
+  }
+</script>
+</body>
+</html>

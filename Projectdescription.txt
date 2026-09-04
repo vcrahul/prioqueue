@@ -1,0 +1,42 @@
+Description :
+Home page:
+1. Welcome note on top bar
+2. Right top corner it will have select profile. Which users can select which profile's tasks they want to see
+It will have a default option called "All" which gives tasks from all the profiles
+3. Task list will have task name category reminder time , EM divisons
+4. Bottom bar will have 4 tabs namely today, EM, Tasks, Profile
+
+EM page:
+This page visually gives eisenhower matrix, 
+1. Gives description what it do in 1 line on top
+2. Shows Eisenhower mateix and display list of tasks on each section.
+Refer internet to undersrand what EM does
+3. A dropdown below top bar will have 2 values
+Today and All. Where today will place only todays takss in EM matrix and All will place all the tasks in this matrix.
+4. Bottkm bar will have same tabs with EM tab in selected colour
+
+Tasks page :
+1. Top bar will have Tasks heading and selected profile
+2. The entire task list will be displayed based on date order with recent date first.
+3. Task list will have task name category reminder time , EM divisons, edit and delete button
+4. Add task button on right bottom above bottom bar
+5. Bottkm bar will have same tabs with tasks tab in selected colour
+6. Delete button will delete the tasks with a alert pop up.
+7. Add tasks is another page where they add tasks name category date time urgency important details and profile it bel9ngs to.
+8. Then we have add category feature as well.
+Refer all the diagrams for that.
+
+Profile page :
+It will have list of profiles and add edit peofile pop up. UI for that is defined in a diagram
+
+. Select peofike button available in all the oages on right top corner.
+
+Export /import functionality available in left top corner inside top bar. There will be a small hamburger button on clicking that. It will show side bar pop up with following options.
+Name
+Import
+Export
+About
+
+Import featyre is restricted when data is already available. One warning needs to be given telling merging may sometime remove the existing takss. Proceed with your own risk.
+
+Export will always export it in json form
